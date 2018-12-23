@@ -16,18 +16,18 @@
   <div id="app">
     <v-app>
       <v-content>
-        <v-container>
+        <v-container fluid>
           <v-layout align-center justify-center row fill-height>
             <v-flex xs12 sm6 md3>
               <v-text-field label="Zip Code" v-model="zip"/>
             </v-flex>
             <v-btn color="error" @click="getWeather">Get Forecast</v-btn>
           </v-layout>
-          <!-- <v-flex xs12 sm6 md3><div>humidity: {{ humidity }} </div></v-flex>
-          <v-flex xs12 sm6 md3><div>pressure: {{ pressure }} </div></v-flex>
-          <v-flex xs12 sm6 md3><div>temp: {{ temp }} </div></v-flex> -->
+
+          <!-- Current Weather -->
           <v-layout align-center justify-center row fill-height v-if="city">
-          <v-card>
+          
+            <v-card>
             <v-card-title id="theCity" class="my-0 pb-0 mb-0">
               <h1>{{ city }}</h1>
               </v-card-title>
@@ -43,8 +43,9 @@
           </v-card>
           </v-layout>
 
-          <v-layout align-center justify-center row fill-height v-if="city">
-            <div v-for="day of forecastDays">
+            <!-- 5 Day Forecast -->
+          <v-layout v-if="city" id="forecast">
+            <v-flex v-for="day of forecastDays">
               <v-card class="mt-3">
                 <v-card-title>
                   {{day.date}}
@@ -55,11 +56,8 @@
                 <v-divider></v-divider>
                 <v-card-text class="text-xs-center"><h3>{{day.temp}}F</h3><h3>{{day.desc}}</h3></v-card-text>
               </v-card>
-            </div>
+            </v-flex>
           </v-layout>
-          <!-- <div v-for="day of forecastDays">
-            <v-flex xs12 sm6 md3><div>{{ day.date }}: {{ day.high }} </div></v-flex>
-          </div> -->
         </v-container>
       </v-content>
     </v-app>
@@ -83,6 +81,8 @@
       temp: '',
       things: [],
       forecastDays: [],
+    },
+    computed: {
     },
     methods: {
       getWeather() {
@@ -131,13 +131,20 @@
           // this.getForecast()
       }
     },
-    computed: {},
+    
     created() {}
   })
 </script>
+
 <style>
 #theCity{
   justify-content: center;
+}
+
+@media(max-width:768px){
+#forecast{
+  display: block;
+}
 }
 </style>
 
