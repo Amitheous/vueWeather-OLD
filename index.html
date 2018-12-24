@@ -14,9 +14,9 @@
 
 <body>
   <div id="app">
-    <v-app>
+    <v-app class="light-blue lighten-3">
       <v-content>
-        <v-container fluid>
+        <v-container fluid >
           <v-layout align-center justify-center row fill-height>
             <v-flex xs12 sm6 md3>
               <v-text-field label="Zip Code" v-model="zip"/>
@@ -27,8 +27,8 @@
           <!-- Current Weather -->
           <v-layout align-center justify-center row fill-height v-if="city">
           
-            <v-card>
-            <v-card-title id="theCity" class="my-0 pb-0 mb-0">
+            <v-card class="green accent-2">
+            <v-card-title class="my-0 pb-0 mb-0" style="justify-content:center">
               <h1>{{ city }}</h1>
               </v-card-title>
               <v-card-text class="text-xs-center pt-0 pb-0 mt-0">
@@ -46,9 +46,9 @@
             <!-- 5 Day Forecast -->
           <v-layout v-if="city" id="forecast">
             <v-flex v-for="day of forecastDays">
-              <v-card class="mt-3">
-                <v-card-title>
-                  {{day.date}}
+              <v-card class="mt-3 green accent-2">
+                <v-card-title style="justify-content: center">
+                  <h2>{{day.date}}</h2>
                 </v-card-title>
                 <v-card-text class="text-xs-center pt-0 pb-0">
                   <img v-bind:src="day.icon">
@@ -86,7 +86,6 @@
     },
     methods: {
       getWeather() {
-        const self = this;
         function capitalizeEachWord(str) {
               return str.replace(/\w\S*/g, function (txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -98,15 +97,11 @@
         axios.get(`https://api.openweathermap.org/data/2.5/weather?zip=${this.zip},us&units=imperial&APPID=${this.apiKey}`)
           .then(response => {
             const data = response.data
-            
-            self.things.push({ value: Math.round(data.main.temp), type: "F" })
-            self.things.push({ value: data.main.humidity, type: '% Humidity' })
-            self.things.push({ value: capitalizeEachWord(data.weather[0].description) })
-            self.city=data.name
-            self.icon= `https://openweathermap.org/img/w/${data.weather[0].icon}.png`
-            // self.humidity = main.humidity
-            // self.pressure = main.pressure
-            // self.temp = main.temp
+            this.things.push({ value: Math.round(data.main.temp), type: "F" })
+            this.things.push({ value: data.main.humidity, type: '% Humidity' })
+            this.things.push({ value: capitalizeEachWord(data.weather[0].description) })
+            this.city=data.name
+            this.icon= `https://openweathermap.org/img/w/${data.weather[0].icon}.png`
           })
           .catch(err => {
             console.log('Failed to get weather info from api: ', err);
@@ -115,37 +110,31 @@
           // Function to get forecast weather
           axios.get(`https://api.openweathermap.org/data/2.5/forecast?zip=${this.zip},us&units=imperial&APPID=${this.apiKey}`)
             .then(response => {
+                        // Array values correspond with values within the JSON file to get oen temperature from the same time for each day
               var forecastArray=[0,8,16,24,32]
               const forecastList = response.data.list
               for(var i=0; i<5;i++){
-                console.log(forecastList[forecastArray[i]])
-                self.forecastDays.push(
+                var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+                this.forecastDays.push(
                   {
-                    date:forecastList[forecastArray[i]].dt_txt,
+                            // Gets the value for the day of the week and converts it to the corresponding string
+                    date: days[(new Date(forecastList[forecastArray[i]].dt_txt).getDay())],
                     temp: Math.round(forecastList[forecastArray[i]].main.temp),
                     icon: `https://openweathermap.org/img/w/${forecastList[forecastArray[i]].weather[0].icon}.png`,
                     desc: capitalizeEachWord(forecastList[forecastArray[i]].weather[0].description)
                 })
               }
             })
-          // this.getForecast()
       }
     },
-    
-    created() {}
   })
 </script>
 
 <style>
-#theCity{
-  justify-content: center;
-}
-
 @media(max-width:768px){
 #forecast{
   display: block;
-}
-}
+}}
 </style>
 
 
